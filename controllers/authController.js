@@ -1,7 +1,8 @@
 const User = require("../models/User");
 const generateOTP = require("../utils/generateOTP");
 const twilio = require("twilio");
-const bcrypt = require("bcrypt");
+// const bcrypt = require("bcrypt");
+const bcrypt = require("bcryptjs");
 
 // Initialize Twilio client
 const client = twilio(process.env.TWILIO_SID, process.env.TWILIO_AUTH_TOKEN);
