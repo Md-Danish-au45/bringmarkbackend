@@ -1,4 +1,6 @@
 const Blog = require("../models/Blog");
+const multer = require("multer");
+const path = require("path");
 
 // Get all blogs
 exports.getAllBlogs = async (req, res) => {
@@ -16,12 +18,75 @@ exports.getBlogById = async (req, res) => {
   }
 };
 
-// Create blog
+// Configure storage for uploaded files
+const storage = multer.diskStorage({
+  destination: (req, file, cb) => {
+    cb(null, "uploads/");
+  },
+  filename: (req, file, cb) => {
+    cb(null, `${Date.now()}-${file.originalname}`);
+  },
+});
+
+const upload = multer({ storage });
+
+exports.uploadMiddleware = upload.fields([
+  { name: "imageUrlFile", maxCount: 1 },
+  { name: "authorImageFile", maxCount: 1 },
+]);
+
 exports.createBlog = async (req, res) => {
-  const newBlog = new Blog(req.body);
-  await newBlog.save();
-  res.status(201).json(newBlog);
+  try {
+    const { title, introText, content, author, tags = [], ...rest } = req.body;
+
+    // Process uploaded files
+    const imageUrl = req.files?.imageUrlFile?.[0]?.path;
+    const authorImage = req.files?.authorImageFile?.[0]?.path;
+
+    // Create blog data object
+    const blogData = {
+      title,
+      introText,
+      content,
+      author,
+      imageUrl,
+      imageCredit: rest.imageCredit || "",
+      tags: Array.isArray(tags) ? tags : [],
+      authorTitle: rest.authorTitle || "",
+      authorBio: rest.authorBio || "",
+      authorImage: authorImage || "",
+      socialLinks: {
+        twitter: rest.socialLinks?.twitter || "",
+        linkedin: rest.socialLinks?.linkedin || "",
+        website: rest.socialLinks?.website || "",
+      },
+    };
+
+    // Validate required fields
+    if (
+      !blogData.title ||
+      !blogData.introText ||
+      !blogData.content ||
+      !blogData.author ||
+      !blogData.imageUrl
+    ) {
+      return res.status(400).json({ message: "Missing required fields" });
+    }
+
+    const newBlog = new Blog(blogData);
+    await newBlog.save();
+    res.status(201).json(newBlog);
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ message: "Server error", error: err.message });
+  }
 };
+
+// Add this to your exports
+exports.upload = upload.fields([
+  { name: "imageUrlFile", maxCount: 1 },
+  { name: "authorImageFile", maxCount: 1 },
+]);
 
 // Update blog
 exports.updateBlog = async (req, res) => {

@@ -5,6 +5,7 @@ const routes = require("./routes"); // ✅ Clean and centralized
 const errorHandler = require("./middleware/errorHandler");
 const bodyParser = require("body-parser");
 const blogRoutes = require("./routes/blogRoutes");
+const path = require("path");
 
 dotenv.config();
 
@@ -20,6 +21,7 @@ app.use(express.json());
 app.use(cors());
 
 app.use(bodyParser.json());
+app.use("/uploads", express.static(path.join(__dirname, "uploads")));
 
 // Login API
 app.post("/login", (req, res) => {
@@ -34,7 +36,6 @@ app.post("/login", (req, res) => {
 // Routes
 app.use("/api", routes); // All routes start with /api
 app.use("/api/blogs", blogRoutes);
-
 // Error Handler
 app.use(errorHandler);
 
