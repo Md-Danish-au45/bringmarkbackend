@@ -19,6 +19,7 @@ exports.getBlogById = async (req, res) => {
 };
 
 // Configure storage for uploaded files
+// Configure storage for uploaded files
 const storage = multer.diskStorage({
   destination: (req, file, cb) => {
     cb(null, "uploads/");
@@ -78,6 +79,17 @@ exports.createBlog = async (req, res) => {
     res.status(201).json(newBlog);
   } catch (err) {
     console.error(err);
+
+    // Handle duplicate key errors specifically
+    if (err.code === 11000) {
+      const field = Object.keys(err.keyPattern)[0];
+      return res.status(400).json({
+        message: `Blog with this ${field} already exists`,
+        field,
+        error: err.message,
+      });
+    }
+
     res.status(500).json({ message: "Server error", error: err.message });
   }
 };

@@ -1,8 +1,17 @@
 const mongoose = require("mongoose");
+const slugify = require("slugify");
 
 const blogSchema = new mongoose.Schema(
   {
-    title: { type: String, required: true },
+    title: {
+      type: String,
+      required: true,
+      unique: true,
+    },
+    slug: {
+      type: String,
+      unique: true,
+    },
 
     imageUrl: { type: String, required: true },
     imageCredit: { type: String },
@@ -29,5 +38,16 @@ const blogSchema = new mongoose.Schema(
   },
   { timestamps: true }
 );
+// Add pre-save hook to generate slug
+blogSchema.pre("save", function (next) {
+  if (this.isModified("title")) {
+    this.slug = slugify(this.title, {
+      lower: true,
+      strict: true,
+      remove: /[*+~.()'"!:@]/g,
+    });
+  }
+  next();
+});
 
 module.exports = mongoose.model("Blog", blogSchema);
