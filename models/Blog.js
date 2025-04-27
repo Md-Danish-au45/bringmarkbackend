@@ -12,24 +12,16 @@ const blogSchema = new mongoose.Schema(
       type: String,
       unique: true,
     },
-
     imageUrl: { type: String, required: true },
     imageCredit: { type: String },
-
     introText: { type: String, required: true },
-    content: { type: String, required: true }, // Full HTML/text content
-
+    content: { type: String, required: true },
     tags: [{ type: String }],
-
     likes: { type: Number, default: 0 },
-
-    // Author Information
     author: { type: String, required: true },
     authorTitle: { type: String },
     authorImage: { type: String },
     authorBio: { type: String },
-
-    // Social Links (optional URLs)
     socialLinks: {
       twitter: { type: String },
       linkedin: { type: String },
@@ -38,6 +30,7 @@ const blogSchema = new mongoose.Schema(
   },
   { timestamps: true }
 );
+
 // Add pre-save hook to generate slug
 blogSchema.pre("save", function (next) {
   if (this.isModified("title")) {
