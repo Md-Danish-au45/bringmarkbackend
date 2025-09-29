@@ -5,20 +5,22 @@ dotenv.config();
 
 const connectDB = async () => {
   try {
-    const environment = process.env.NODE_ENV || "development";
-    const uri =
-      environment === "production"
-        ? process.env.MONGO_URI_PROD
-        : process.env.MONGO_URI_DEV;
+    const uri = process.env.MONGO_URI_DEV;
 
-    console.log(`NODE_ENV: ${environment}`);
-    console.log(`Connecting to MongoDB (${environment}): ${uri}`);
+    console.log(`Connecting to MongoDB: ${uri}`);
 
-    await mongoose.connect(uri);
-    console.log("MongoDB connected successfully...");
+    await mongoose.connect(uri, {
+      useNewUrlParser: true,
+      useUnifiedTopology: true,
+      serverSelectionTimeoutMS: 5000,
+      socketTimeoutMS: 45000,
+      bufferCommands: false,
+    });
+
+    console.log("✅ MongoDB connected successfully...");
   } catch (error) {
     console.error("❌ Error connecting to MongoDB:");
-    console.error(error);
+    console.error(error.message || error);
     process.exit(1);
   }
 };
