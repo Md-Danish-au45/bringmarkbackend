@@ -1,7 +1,7 @@
 const express = require("express");
 const cors = require("cors");
 const dotenv = require("dotenv");
-const routes = require("./routes"); // ✅ Clean and centralized
+const routes = require("./routes");
 const errorHandler = require("./middleware/errorHandler");
 const bodyParser = require("body-parser");
 const blogRoutes = require("./routes/blogRoutes");
@@ -10,6 +10,16 @@ const path = require("path");
 dotenv.config();
 
 const app = express();
+
+// CORS Configuration
+const corsOptions = {
+  origin: ['https://www.bringmark.com','http://localhost:3000'], // Allow requests from this origin
+  methods: ['GET', 'POST', 'PUT', 'DELETE'], // Allow these HTTP methods
+  credentials: true, // Enable credentials if necessary (cookies, authorization headers)
+};
+
+app.use(cors(corsOptions)); // Use the configured CORS options
+
 // Manually set credentials
 const storedUser = {
   username: "admin",
@@ -18,8 +28,6 @@ const storedUser = {
 
 // Middlewares
 app.use(express.json());
-app.use(cors());
-
 app.use(bodyParser.json());
 app.use("/uploads", express.static(path.join(__dirname, "uploads")));
 
@@ -33,12 +41,12 @@ app.post("/login", (req, res) => {
     return res.status(401).json({ message: "Invalid username or password" });
   }
 });
+
 // Routes
 app.use("/api", routes); // All routes start with /api
 app.use("/api/blogs", blogRoutes);
+
 // Error Handler
 app.use(errorHandler);
 
 module.exports = app;
-
-//
