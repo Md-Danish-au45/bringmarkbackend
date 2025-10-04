@@ -3,8 +3,8 @@ const nodemailer = require("nodemailer");
 const sendEmail = async (options) => {
   const transporter = nodemailer.createTransport({
     host: process.env.SMTP_HOST,
-    port: process.env.SMTP_PORT,
-    secure: false, // 465 ke liye true, 587 ke liye false
+    port: parseInt(process.env.SMTP_PORT),
+    secure: parseInt(process.env.SMTP_PORT) === 465, // true for 465, false for 587
     auth: {
       user: process.env.SMTP_USER,
       pass: process.env.SMTP_PASS,
@@ -13,10 +13,10 @@ const sendEmail = async (options) => {
 
   const mailOptions = {
     from: `"Contact Form" <${process.env.SMTP_USER}>`,
-    to: process.env.RECEIVER_EMAIL, // jis email pe notification chahiye
+    to: process.env.RECEIVER_EMAIL,
     subject: options.subject,
     text: options.message,
-    html: options.html, // agar HTML email bhejna ho
+    html: options.html,
   };
 
   await transporter.sendMail(mailOptions);
