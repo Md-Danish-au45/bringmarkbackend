@@ -11,42 +11,26 @@ dotenv.config();
 
 const app = express();
 
-// CORS Configuration
-const corsOptions = {
-  origin: ['https://www.bringmark.com','http://localhost:3000'], // Allow requests from this origin
-  methods: ['GET', 'POST', 'PUT', 'DELETE'], // Allow these HTTP methods
-  credentials: true, // Enable credentials if necessary (cookies, authorization headers)
-};
-
-app.use(cors(corsOptions)); // Use the configured CORS options
-
-// Manually set credentials
-const storedUser = {
-  username: "admin",
-  password: "123456",
-};
-
-// Middlewares
+// CORS
+app.use(cors({ origin: ['https://www.bringmark.com','http://localhost:3000'], credentials: true }));
 app.use(express.json());
 app.use(bodyParser.json());
 app.use("/uploads", express.static(path.join(__dirname, "uploads")));
 
-// Login API
+// Login route
 app.post("/login", (req, res) => {
+  const storedUser = { username: "admin", password: "123456" };
   const { username, password } = req.body;
-
-  if (username === storedUser.username && password === storedUser.password) {
+  if (username === storedUser.username && password === storedUser.password)
     return res.status(200).json({ message: "Login successful!" });
-  } else {
-    return res.status(401).json({ message: "Invalid username or password" });
-  }
+  return res.status(401).json({ message: "Invalid username or password" });
 });
 
-// Routes
-app.use("/api", routes); // All routes start with /api
+// API routes
+app.use("/api", routes);
 app.use("/api/blogs", blogRoutes);
 
-// Error Handler
+// Error handler
 app.use(errorHandler);
 
-module.exports = app;
+module.exports = app; // **no app.listen()**
