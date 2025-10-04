@@ -1,4 +1,5 @@
 const Contact = require("../models/Contact");
+const sendEmail = require("../utils/sendEmail");
 
 exports.submitContactForm = async (req, res, next) => {
   try {
@@ -16,11 +17,31 @@ exports.submitContactForm = async (req, res, next) => {
       company,
     });
 
+    // ✅ Email send karna
+    await sendEmail({
+      subject: "New Contact Form Submission",
+      message: `
+        Name: ${fullName}
+        Company: ${company}
+        Email: ${email}
+        Phone: ${phoneNumber}
+        Message: ${message}
+      `,
+      html: `
+        <h2>New Contact Form Submission</h2>
+        <p><strong>Name:</strong> ${fullName}</p>
+        <p><strong>Company:</strong> ${company}</p>
+        <p><strong>Email:</strong> ${email}</p>
+        <p><strong>Phone:</strong> ${phoneNumber}</p>
+        <p><strong>Message:</strong> ${message}</p>
+      `,
+    });
+
     res.status(201).json({
-      message: "Contact form submitted successfully.",
+      message: "Contact form submitted successfully & email sent.",
       data: newContact,
     });
-    console.log(newContact, "datas");
+
   } catch (error) {
     next(error);
   }
