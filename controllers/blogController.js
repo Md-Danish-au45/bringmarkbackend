@@ -151,3 +151,18 @@ exports.deleteBlog = async (req, res) => {
     res.status(404).json({ message: "Blog not found" });
   }
 };
+
+
+// Existing code ke baad ye naya function add करें
+
+exports.getBlogBySlug = async (req, res) => {
+  try {
+    const blog = await Blog.findOne({ slug: req.params.slug });
+    if (!blog) {
+      return res.status(404).json({ message: "Blog not found" });
+    }
+    res.json(blog);
+  } catch (err) {
+    res.status(500).json({ message: "Server error", error: err.message });
+  }
+};
