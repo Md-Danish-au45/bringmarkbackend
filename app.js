@@ -5,6 +5,7 @@ const routes = require("./routes");
 const errorHandler = require("./middleware/errorHandler");
 const bodyParser = require("body-parser");
 const blogRoutes = require("./routes/blogRoutes");
+const faqs = require("./routes/faqsRoutes");
 const path = require("path");
 
 dotenv.config();
@@ -45,7 +46,7 @@ app.post("/login", (req, res) => {
 // Routes
 app.use("/api", routes); // All routes start with /api
 app.use("/api/blogs", blogRoutes);
-app.use("/api/blogs", blogRoutes);
+app.use("/api/faqs",faqs );
 
 // Error Handler
 app.use(errorHandler);

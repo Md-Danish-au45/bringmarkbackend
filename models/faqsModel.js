@@ -1,4 +1,4 @@
-import mongoose from "mongoose";
+const mongoose  =  require("mongoose");
 
 const faqSchema = new mongoose.Schema(
   {
@@ -88,4 +88,4 @@ enum: [
   { timestamps: true }
 );
 
-export default mongoose.model("FAQ", faqSchema);
+module.exports =  mongoose.model("FAQ", faqSchema);

@@ -1,5 +1,5 @@
 const express = require("express");
-import { createFAQ, deleteFAQ, getFAQs, updateFAQ } from "../controllers/faqsController";
+const { createFAQ, deleteFAQ, getFAQs, updateFAQ } = require("../controllers/faqsController");
 
 
 const router = express.Router();
@@ -9,4 +9,4 @@ router.get("/", getFAQs);
 router.put("/:id", updateFAQ);
 router.delete("/:id", deleteFAQ);
 
-export default router;
+module.exports = router
