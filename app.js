@@ -45,6 +45,7 @@ app.post("/login", (req, res) => {
 // Routes
 app.use("/api", routes); // All routes start with /api
 app.use("/api/blogs", blogRoutes);
+app.use("/api/blogs", blogRoutes);
 
 // Error Handler
 app.use(errorHandler);
