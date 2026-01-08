@@ -8,12 +8,13 @@ router.post("/", blogController.uploadMiddleware, blogController.createBlog);
 // Get all blogs
 router.get("/", blogController.getAllBlogs);
 
-// ⭐ Slug-based route (ye ID route se PEHLE hona chahiye)
-router.get("/slug/:slug", blogController.getBlogBySlug);
+// ✅ Slug route FIRST (no /slug prefix)
+router.get("/:slug", blogController.getBlogBySlug);
 
-// ID-based routes
-router.get("/:id", blogController.getBlogById);
-router.put("/:id", blogController.updateBlog);
-router.delete("/:id", blogController.deleteBlog);
+// ID routes (move them to another path)
+router.get("/id/:id", blogController.getBlogById);
+router.put("/id/:id", blogController.updateBlog);
+router.delete("/id/:id", blogController.deleteBlog);
+
 
 module.exports = router;

@@ -119,19 +119,31 @@ exports.createBlog = async (req, res) => {
 };
 
 exports.getAllBlogs = async (req, res) => {
-  const blogs = await Blog.find();
-  res.json(blogs);
-};
-
-exports.getBlogById = async (req, res) => {
   try {
-    const blog = await Blog.findById(req.params.id);
-    res.json(blog);
+    const blogs = await Blog.find().sort({ createdAt: -1 });
+    res.json(blogs);
   } catch (err) {
-    res.status(404).json({ message: "Blog not found" });
+    res.status(500).json({ message: "Server error", error: err.message });
   }
 };
 
+
+exports.getBlogById = async (req, res) => {
+  try {
+    if (!mongoose.Types.ObjectId.isValid(req.params.id)) {
+      return res.status(400).json({ message: "Invalid blog id" });
+    }
+
+    const blog = await Blog.findById(req.params.id);
+    if (!blog) {
+      return res.status(404).json({ message: "Blog not found" });
+    }
+
+    res.json(blog);
+  } catch (err) {
+    res.status(500).json({ message: "Server error", error: err.message });
+  }
+};
 exports.updateBlog = async (req, res) => {
   try {
     const updatedBlog = await Blog.findByIdAndUpdate(req.params.id, req.body, {
